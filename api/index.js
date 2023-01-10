@@ -110,19 +110,33 @@ function App() {
 // app/routes/index.tsx
 var routes_exports = {};
 __export(routes_exports, {
-  default: () => Index
+  default: () => Index,
+  loader: () => loader
 });
-var import_jsx_dev_runtime3 = require("react/jsx-dev-runtime");
+var import_react3 = require("@remix-run/react");
+
+// utils/supabase.ts
+var import_supabase_js = require("@supabase/supabase-js"), supabase_default = (0, import_supabase_js.createClient)(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
+// app/routes/index.tsx
+var import_jsx_dev_runtime3 = require("react/jsx-dev-runtime"), loader = async ({}) => {
+  let { data } = await supabase_default.from("messages").select();
+  return { messages: data ?? [] };
+};
 function Index() {
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("h1", { children: "hello" }, void 0, !1, {
+  let { messages } = (0, import_react3.useLoaderData)();
+  return console.log({ messages }), /* @__PURE__ */ (0, import_jsx_dev_runtime3.jsxDEV)("pre", { children: JSON.stringify(messages, null, 2) }, void 0, !1, {
     fileName: "app/routes/index.tsx",
-    lineNumber: 2,
+    lineNumber: 15,
     columnNumber: 10
   }, this);
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "140081c8", entry: { module: "/build/entry.client-KUH56R3R.js", imports: ["/build/_shared/chunk-ZVAODM2J.js", "/build/_shared/chunk-EETRBLDB.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-D7FM5NPO.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-AEFOMC77.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-140081C8.js" };
+var assets_manifest_default = { version: "8516a9b3", entry: { module: "/build/entry.client-GS4PA7KZ.js", imports: ["/build/_shared/chunk-7JWVIZQC.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-V24RRAZT.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-AV53I3LJ.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-8516A9B3.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
