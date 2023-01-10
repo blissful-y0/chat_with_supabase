@@ -48,74 +48,94 @@ function handleRequest(request, responseStatusCode, responseHeaders, remixContex
 // app/root.tsx
 var root_exports = {};
 __export(root_exports, {
-  default: () => App,
+  default: () => root_default,
   loader: () => loader,
   meta: () => meta
 });
-var import_node = require("@remix-run/node"), import_react2 = require("@remix-run/react"), import_supabase_js = require("@supabase/supabase-js"), import_react3 = require("react"), import_jsx_dev_runtime2 = require("react/jsx-dev-runtime"), meta = () => ({
+var import_node = require("@remix-run/node"), import_react2 = require("@remix-run/react"), import_react3 = require("react");
+
+// utils/supabase.server.ts
+var import_auth_helpers_remix = require("@supabase/auth-helpers-remix"), supabase_server_default = ({
+  request,
+  response
+}) => (0, import_auth_helpers_remix.createServerClient)(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY,
+  { request, response }
+);
+
+// app/root.tsx
+var import_auth_helpers_remix2 = require("@supabase/auth-helpers-remix"), import_jsx_dev_runtime2 = require("react/jsx-dev-runtime"), meta = () => ({
   charset: "utf-8",
   title: "New Remix App",
   viewport: "width=device-width,initial-scale=1"
-}), loader = async ({}) => {
+}), loader = async ({ request }) => {
   let env = {
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY
-  };
-  return (0, import_node.json)({ env });
+  }, response = new Response(), supabase = supabase_server_default({ request, response }), {
+    data: { session }
+  } = await supabase.auth.getSession();
+  return (0, import_node.json)({ env, session }, { headers: response.headers });
 };
 function App() {
-  let { env } = (0, import_react2.useLoaderData)(), [supabase] = (0, import_react3.useState)(
-    () => (0, import_supabase_js.createClient)(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
+  let { env, session } = (0, import_react2.useLoaderData)();
+  console.log({ server: { session } });
+  let [supabase] = (0, import_react3.useState)(
+    () => (0, import_auth_helpers_remix2.createBrowserClient)(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("html", { lang: "en", children: [
+  return (0, import_react3.useEffect)(() => {
+    supabase.auth.getSession().then((session2) => console.log({ client: { session: session2 } }));
+  }, []), /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("html", { lang: "en", children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("head", { children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Meta, {}, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 47,
+        lineNumber: 66,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Links, {}, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 48,
+        lineNumber: 67,
         columnNumber: 9
       }, this)
     ] }, void 0, !0, {
       fileName: "app/root.tsx",
-      lineNumber: 46,
+      lineNumber: 65,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("body", { children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Outlet, { context: { supabase } }, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 51,
+        lineNumber: 70,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.ScrollRestoration, {}, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 52,
+        lineNumber: 71,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.Scripts, {}, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 53,
+        lineNumber: 72,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(import_react2.LiveReload, {}, void 0, !1, {
         fileName: "app/root.tsx",
-        lineNumber: 54,
+        lineNumber: 73,
         columnNumber: 9
       }, this)
     ] }, void 0, !0, {
       fileName: "app/root.tsx",
-      lineNumber: 50,
+      lineNumber: 69,
       columnNumber: 7
     }, this)
   ] }, void 0, !0, {
     fileName: "app/root.tsx",
-    lineNumber: 45,
+    lineNumber: 64,
     columnNumber: 5
   }, this);
 }
+var root_default = App;
 
 // app/routes/index.tsx
 var routes_exports = {};
@@ -123,13 +143,7 @@ __export(routes_exports, {
   default: () => Index,
   loader: () => loader2
 });
-var import_react5 = require("@remix-run/react");
-
-// utils/supabase.server.ts
-var import_supabase_js2 = require("@supabase/supabase-js"), supabase_server_default = (0, import_supabase_js2.createClient)(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+var import_node2 = require("@remix-run/node"), import_react5 = require("@remix-run/react");
 
 // app/components/login.tsx
 var import_react4 = require("@remix-run/react"), import_jsx_dev_runtime3 = require("react/jsx-dev-runtime");
@@ -163,33 +177,33 @@ function Login() {
 var login_default = Login;
 
 // app/routes/index.tsx
-var import_jsx_dev_runtime4 = require("react/jsx-dev-runtime"), loader2 = async ({}) => {
-  let { data } = await supabase_server_default.from("messages").select();
-  return { messages: data ?? [] };
+var import_jsx_dev_runtime4 = require("react/jsx-dev-runtime"), loader2 = async ({ request }) => {
+  let response = new Response(), supabase = supabase_server_default({ request, response }), { data } = await supabase.from("messages").select();
+  return (0, import_node2.json)({ messages: data ?? [] }, { headers: response.headers });
 };
 function Index() {
   let { messages } = (0, import_react5.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)(import_jsx_dev_runtime4.Fragment, { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)(login_default, {}, void 0, !1, {
       fileName: "app/routes/index.tsx",
-      lineNumber: 17,
+      lineNumber: 19,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("pre", { children: JSON.stringify(messages, null, 2) }, void 0, !1, {
       fileName: "app/routes/index.tsx",
-      lineNumber: 18,
+      lineNumber: 20,
       columnNumber: 7
     }, this),
     ";"
   ] }, void 0, !0, {
     fileName: "app/routes/index.tsx",
-    lineNumber: 16,
+    lineNumber: 18,
     columnNumber: 5
   }, this);
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "62947b71", entry: { module: "/build/entry.client-6EYUEOQE.js", imports: ["/build/_shared/chunk-L3IHXGVX.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-UIFEA6WM.js", imports: ["/build/_shared/chunk-SPUIDVFV.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-QSYL2MHE.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-62947B71.js" };
+var assets_manifest_default = { version: "c087be3e", entry: { module: "/build/entry.client-HONJIPCY.js", imports: ["/build/_shared/chunk-TOGXTF7R.js", "/build/_shared/chunk-4IYZMDEG.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-4HYBYZET.js", imports: ["/build/_shared/chunk-XGTHKDRK.js", "/build/_shared/chunk-WENNLJWR.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-QDBIPJWJ.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-C087BE3E.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public/build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
