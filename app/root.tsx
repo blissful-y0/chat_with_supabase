@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, LoaderArgs, MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -6,7 +6,22 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+
+import createServerSupabase from "utils/supabase.server";
+
+import type { Database } from "db_types";
+import { createBrowserClient } from "@supabase/auth-helpers-remix";
+import { hydrateRoot } from "react-dom/client";
+
+type TypedSupabaseClient = SupabaseClient<Database>;
+
+export type SupabaseOutletContext = {
+  supabase: TypedSupabaseClient;
+};
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -14,7 +29,37 @@ export const meta: MetaFunction = () => ({
   viewport: "width=device-width,initial-scale=1",
 });
 
-export default function App() {
+export const loader = async ({ request }: LoaderArgs) => {
+  const env = {
+    SUPABASE_URL: process.env.SUPABASE_URL!,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+  };
+
+  const response = new Response();
+  const supabase = createServerSupabase({ request, response });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return json({ env, session }, { headers: response.headers });
+};
+
+function App() {
+  const { env, session } = useLoaderData<typeof loader>();
+
+  console.log({ server: { session } });
+
+  const [supabase] = useState(() =>
+    createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
+  );
+
+  useEffect(() => {
+    supabase.auth
+      .getSession()
+      .then((session) => console.log({ client: { session } }));
+  }, []);
+
   return (
     <html lang="en">
       <head>
@@ -22,7 +67,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
@@ -30,3 +75,5 @@ export default function App() {
     </html>
   );
 }
+
+export default App;
