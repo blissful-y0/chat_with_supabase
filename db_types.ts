@@ -11,19 +11,22 @@ export interface Database {
     Tables: {
       messages: {
         Row: {
-          id: string
-          created_at: string
           content: string
+          created_at: string
+          id: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          created_at?: string
           content: string
+          created_at?: string
+          id?: string
+          user_id: string
         }
         Update: {
-          id?: string
-          created_at?: string
           content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
         }
       }
     }

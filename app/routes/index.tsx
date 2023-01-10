@@ -1,6 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import supabase from "utils/supabase";
+import supabase from "utils/supabase.server";
+import Login from "~/components/login";
 
 export const loader = async ({}: LoaderArgs) => {
   const { data } = await supabase.from("messages").select();
@@ -11,6 +12,10 @@ export const loader = async ({}: LoaderArgs) => {
 export default function Index() {
   const { messages } = useLoaderData<typeof loader>();
 
-  console.log({ messages });
-  return <pre>{JSON.stringify(messages, null, 2)}</pre>;
+  return (
+    <>
+      <Login />
+      <pre>{JSON.stringify(messages, null, 2)}</pre>;
+    </>
+  );
 }
